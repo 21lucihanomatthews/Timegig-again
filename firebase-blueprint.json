@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "PopSubmission": {
+      "title": "PopSubmission",
+      "description": "Proof of payment and profile verification submission",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 200 },
+        "userEmail": { "type": "string", "maxLength": 200 },
+        "planName": { "type": "string", "maxLength": 100 },
+        "amount": { "type": "string", "maxLength": 50 },
+        "reference": { "type": "string", "maxLength": 100 },
+        "fileName": { "type": "string", "maxLength": 255 },
+        "selfieName": { "type": "string", "maxLength": 255 },
+        "idDocName": { "type": "string", "maxLength": 255 },
+        "profileStatus": { "type": "string", "enum": ["Pending", "Approved", "Rejected"] },
+        "paymentStatus": { "type": "string", "enum": ["Pending", "Approved", "Rejected", "NotSubmitted"] },
+        "date": { "type": "string", "maxLength": 50 },
+        "selfieUrl": { "type": "string", "maxLength": 500000 },
+        "idDocUrl": { "type": "string", "maxLength": 500000 },
+        "popUrl": { "type": "string", "maxLength": 500000 },
+        "trade": { "type": "string", "maxLength": 200 },
+        "address": { "type": "string", "maxLength": 500 },
+        "contactInfo": { "type": "string", "maxLength": 200 },
+        "updatedAt": { "type": "number" },
+        "subscriptionApprovedAt": { "type": "number" },
+        "subscriptionExpiresAt": { "type": "number" },
+        "hasSubmittedVerification": { "type": "boolean" },
+        "referredBy": { "type": "string", "maxLength": 128 },
+        "isDisabled": { "type": "boolean" }
+      },
+      "required": ["id", "planName", "profileStatus", "paymentStatus", "date"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Saved user profile and verification state",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "profileName": { "type": "string", "maxLength": 200 },
+        "profileEmail": { "type": "string", "maxLength": 200 },
+        "address": { "type": "string", "maxLength": 500 },
+        "contactInfo": { "type": "string", "maxLength": 200 },
+        "trade": { "type": "string", "maxLength": 200 },
+        "selfieName": { "type": "string", "maxLength": 255 },
+        "idDocName": { "type": "string", "maxLength": 255 },
+        "userFaceUrl": { "type": "string", "maxLength": 500000 },
+        "idDocUrl": { "type": "string", "maxLength": 500000 },
+        "updatedAt": { "type": "number" },
+        "hasSubmittedVerification": { "type": "boolean" }
+      },
+      "required": ["id", "profileName", "profileEmail"]
+    },
+    "GigCancellation": {
+      "title": "GigCancellation",
+      "description": "Records of gig cancellations made by gig owner or seeker with mandatory reason",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "seekerId": { "type": "string", "maxLength": 128 },
+        "seekerName": { "type": "string", "maxLength": 200 },
+        "gigTitle": { "type": "string", "maxLength": 200 },
+        "cancelledBy": { "type": "string", "enum": ["owner", "seeker"] },
+        "cancelledByName": { "type": "string", "maxLength": 200 },
+        "reason": { "type": "string", "maxLength": 1000 },
+        "cancelledAt": { "type": "number" }
+      },
+      "required": ["id", "seekerName", "cancelledBy", "cancelledByName", "reason", "cancelledAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Application user including tenants, seekers, admins with management and rating capabilities",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "enum": ["admin", "tenant", "seeker"] },
+        "managedBy": { "type": "string", "maxLength": 128 },
+        "isActive": { "type": "boolean" },
+        "rating": { "type": "number" },
+        "referralCode": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "email", "role", "isActive"]
+    },
+    "Rating": {
+      "title": "Rating",
+      "description": "Gig rating given by owner to seeker",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "seekerId": { "type": "string", "maxLength": 128 },
+        "gigId": { "type": "string", "maxLength": 128 },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "maxLength": 1000 },
+        "givenBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "seekerId", "rating", "givenBy", "createdAt"]
+    }
+  },
+  "firestore": {
+    "submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/PopSubmission" },
+      "description": "Collection of user profile verification and proof of payment submissions"
+    },
+    "profiles/{profileId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Collection of persisted user profile records"
+    },
+    "cancellations/{cancellationId}": {
+      "schema": { "$ref": "#/entities/GigCancellation" },
+      "description": "Collection of gig cancellations with required reasons"
+    },
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Collection of system users"
+    },
+    "ratings/{ratingId}": {
+      "schema": { "$ref": "#/entities/Rating" },
+      "description": "Collection of gig ratings"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "Minimal White Template",
-  "description": "An empty white template featuring a sleek floating 4-bar menu.",
+  "name": "Tenant29 Gig & Seeker Portal",
+  "description": "Comprehensive Tenant referral, Seeker gig management, and verification portal.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

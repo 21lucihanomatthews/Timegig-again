@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidSubmission(data) {
+      return data.keys().hasAll(['id', 'planName', 'profileStatus', 'paymentStatus', 'date'])
+        && data.id is string && data.id.size() <= 128
+        && data.planName is string && data.planName.size() <= 100
+        && data.profileStatus in ['Pending', 'Approved', 'Rejected']
+        && data.paymentStatus in ['Pending', 'Approved', 'Rejected', 'NotSubmitted']
+        && data.date is string && data.date.size() <= 50;
+    }
+
+    match /submissions/{submissionId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(submissionId) && isValidSubmission(request.resource.data);
+      allow delete: if isValidId(submissionId);
+    }
+
+    match /profiles/{profileId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(profileId);
+    }
+
+    match /cancellations/{cancellationId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(cancellationId);
+      allow delete: if isValidId(cancellationId);
+    }
+
+    match /users/{userId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(userId);
+    }
+
+    match /ratings/{ratingId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(ratingId);
+    }
+
+    match /test/{docId} {
+      allow get: if true;
+    }
+  }
+}
